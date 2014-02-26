@@ -132,4 +132,28 @@ function ExtraSeats:GetPlayerPosition(player)
 
 end
 
+function ExtraSeats:InVehicle(player)
+
+    local playerId = player:GetId() + 1
+
+    for vehicleId, _ in pairs(self.takenSeats) do
+
+        if self.takenSeats[vehicleId][playerId] then
+
+            local vehicle = Vehicle.GetById(vehicleId)
+
+            if vehicle then
+
+                return true
+
+            end
+
+        end
+
+    end
+
+    return player:InVehicle()
+
+end
+
 ExtraSeats = ExtraSeats()
