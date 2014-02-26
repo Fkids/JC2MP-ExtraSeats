@@ -24,7 +24,6 @@ end
 
 function ExtraSeats:init()
 
-    self.tempPosition = Vector3(-6748.748, 208.447, -3621.753) -- Location where players are teleported when entering extra seat
     self.streamDistance = 500 -- Default stream distance
 
     self.extraSeats = {}
@@ -81,10 +80,10 @@ function ExtraSeats:onPlayerLeaveExtraSeat(vehicleId, player)
 
     if vehicle then
 
-        player:SetPosition(vehicle:GetPosition() + vehicle:GetAngle() * Vector3(5, 0, 0))
+        player:SetPosition(vehicle:GetPosition() + vehicle:GetAngle() * Vector3(5, 1, 0))
 
     end
-    
+
 end
 
 function ExtraSeats:onPostTick(player)
@@ -97,7 +96,6 @@ function ExtraSeats:onPostTick(player)
 
             if player then
 
-                player:SetPosition(self.tempPosition)
                 player:SetStreamDistance(0)
 
             end
