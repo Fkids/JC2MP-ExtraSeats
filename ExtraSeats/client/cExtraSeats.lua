@@ -33,6 +33,8 @@ function ExtraSeats:onKeyUp(args)
 
         Network:Send("ES-Leave", self.inVehicle)
         self.inVehicle = false
+        Game:FireEvent("ply.makevulnerable")
+        return
 
     end
 
@@ -40,19 +42,31 @@ function ExtraSeats:onKeyUp(args)
 
     local playerPos = LocalPlayer:GetPosition()
 
+    local minDistance = 500
+    local closestVehicle
+
     for vehicle in Client:GetVehicles() do
 
         if IsValid(vehicle) then
 
-            if Vector3.Distance(vehicle:GetPosition(), playerPos) < self.enterMaxDistance then
+            local distance = Vector3.Distance(vehicle:GetPosition(), playerPos)
 
-                Network:Send("ES-Enter", vehicle:GetId())
+            if distance < self.enterMaxDistance and distance < minDistance then
+
+                minDistance = distance
+                closestVehicle = vehicle:GetId()
 
                 break
 
             end
 
         end
+
+    end
+
+    if closestVehicle then
+
+        Network:Send("ES-Enter", closestVehicle)
 
     end
 
@@ -80,12 +94,15 @@ function ExtraSeats:onCalcView()
 
             Network:Send("ES-Leave", self.inVehicle)
             self.inVehicle = false
+            Game:FireEvent("ply.makevulnerable")
 
         end
 
     end
 
     ExtraSeats.tick = (ExtraSeats.tick or 0) + 1
+
+    return false
 
 end
 
@@ -94,9 +111,9 @@ function ExtraSeats:onLocalPlayerInput(args)
     if not self.inVehicle then return end
 
     if args.input ~= Action.LookUp and
-       args.input ~= Action.LookDown and
-       args.input ~= Action.LookLeft and
-       args.input ~= Action.LookRight then
+            args.input ~= Action.LookDown and
+            args.input ~= Action.LookLeft and
+            args.input ~= Action.LookRight then
 
         return false
 
@@ -108,6 +125,9 @@ function ExtraSeats:onStartSpectatingVehicle(args)
 
     self.inVehicle = args[1]
     self.vehiclePos = args[2]
+
+    ExtraSeats.tick = 0
+    Game:FireEvent("ply.makeinvulnerable")
 
 end
 
