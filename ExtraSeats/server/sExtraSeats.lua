@@ -50,7 +50,7 @@ function ExtraSeats:onPlayerEnterExtraSeatAttempt(vehicleId, player)
 
     if self.takenSeats[vehicleId] then
 
-        if #self.takenSeats[vehicleId] >= (self.extraSeats[vehicleModelId] or 0) then return false end
+        if #ExtraSeats:GetExtraOccupants(vehicle) >= (self.extraSeats[vehicleModelId] or 0) then return false end
 
     end
 
@@ -76,7 +76,7 @@ function ExtraSeats:onPlayerLeaveExtraSeat(vehicleId, player)
 
     if not self.takenSeats[vehicleId][playerId] then return false end
 
-    self.takenSeats[vehicleId][playerId] = false
+    self.takenSeats[vehicleId][playerId] = nil
 
     if vehicle then
 
@@ -153,6 +153,80 @@ function ExtraSeats:InVehicle(player)
     end
 
     return player:InVehicle()
+
+end
+
+function ExtraSeats:GetVehicle(player)
+
+    local playerId = player:GetId() + 1
+
+    for vehicleId, _ in pairs(self.takenSeats) do
+
+        if self.takenSeats[vehicleId][playerId] then
+
+            local vehicle = Vehicle.GetById(vehicleId)
+
+            if vehicle then
+
+                return vehicle
+
+            end
+
+        end
+
+    end
+
+    return player:GetVehicle()
+
+end
+
+function ExtraSeats:GetExtraOccupants(vehicle)
+
+    local extraOccupantsTable = {}
+
+    for vehicleId, _ in pairs(self.takenSeats) do
+
+        local vehicle = Vehicle.GetById(vehicleId)
+
+        if vehicle then
+
+            for playerId, _ in pairs(self.takenSeats[vehicleId]) do
+
+                local player = Player.GetById(playerId - 1)
+
+                if player then
+
+                    table.insert(extraOccupantsTable, player)
+
+                end
+
+            end
+
+        end
+
+    end
+
+    return extraOccupantsTable
+
+end
+
+function ExtraSeats:GetAllOccupants(vehicle)
+
+    local allOccupantsTable = {}
+
+    if vehicle then
+
+        allOccupantsTable = vehicle:GetOccupants()
+
+        for _, player in pairs(ExtraSeats:GetExtraOccupants(vehicle)) do
+
+            table.insert(allOccupantsTable, player)
+
+        end
+
+    end
+
+    return allOccupantsTable
 
 end
 
