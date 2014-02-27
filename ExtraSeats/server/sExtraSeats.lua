@@ -15,8 +15,10 @@ function ExtraSeats:__init()
     ExtraSeats:addSeats(18, 4) -- SV-1003 Raider APC
     ExtraSeats:addSeats(65, 4) -- H-62 Quapaw Helicopter
     ExtraSeats:addSeats(56, 2) -- GV-104 Razorback APC
+    ExtraSeats:addSeats(84, 2) -- Marten Storm III Car
 
     Events:Subscribe("PostTick", self, self.onPostTick)
+    Events:Subscribe("PlayerQuit", self, self.onPlayerQuit)
     Network:Subscribe("ES-Enter", self, self.onPlayerEnterExtraSeatAttempt)
     Network:Subscribe("ES-Leave", self, self.onPlayerLeaveExtraSeat)
 
@@ -108,6 +110,22 @@ function ExtraSeats:onPostTick(player)
 
 end
 
+function ExtraSeats:onPlayerQuit(args)
+
+    local playerId = args.player:GetId() + 1
+
+    for vehicleId, _ in pairs(self.takenSeats) do
+
+        if self.takenSeats[vehicleId][playerId] then
+
+            self.takenSeats[vehicleId][playerId] = nil
+
+        end
+
+    end
+
+end
+
 function ExtraSeats:GetPlayerPosition(player)
 
     local playerId = player:GetId() + 1
@@ -184,11 +202,11 @@ function ExtraSeats:GetExtraOccupants(vehicle)
 
     local extraOccupantsTable = {}
 
-    for vehicleId, _ in pairs(self.takenSeats) do
+    if vehicle then
 
-        local vehicle = Vehicle.GetById(vehicleId)
+        local vehicleId = vehicle:GetId()
 
-        if vehicle then
+        if self.takenSeats[vehicleId] then
 
             for playerId, _ in pairs(self.takenSeats[vehicleId]) do
 
@@ -220,7 +238,7 @@ function ExtraSeats:GetAllOccupants(vehicle)
 
         for _, player in pairs(ExtraSeats:GetExtraOccupants(vehicle)) do
 
-            table.insert(allOccupantsTable, player)
+           table.insert(allOccupantsTable, player)
 
         end
 
