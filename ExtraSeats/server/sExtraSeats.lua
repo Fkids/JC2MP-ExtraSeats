@@ -75,6 +75,8 @@ function ExtraSeats:onPlayerLeaveExtraSeat(vehicleId, player)
     local vehicle = Vehicle.GetById(vehicleId)
 
     local playerId = player:GetId() + 1
+    
+    if not self.takenSeats[vehicleId] then return false end
 
     if not self.takenSeats[vehicleId][playerId] then return false end
 
