@@ -16,6 +16,9 @@ function ExtraSeats:__init()
     ExtraSeats:addSeats(65, 4) -- H-62 Quapaw Helicopter
     ExtraSeats:addSeats(56, 2) -- GV-104 Razorback APC
     ExtraSeats:addSeats(84, 2) -- Marten Storm III Car
+    ExtraSeats:addSeats(64, 1) -- AH-33 Topachula Helicopter
+    ExtraSeats:addSeats(37, 1) -- Sivirkin 15 Havoc Helicopter
+    ExtraSeats:addSeats(34, 1) -- G9 Eclipse Fighter Jet
 
     Events:Subscribe("PostTick", self, self.onPostTick)
     Events:Subscribe("PlayerQuit", self, self.onPlayerQuit)
