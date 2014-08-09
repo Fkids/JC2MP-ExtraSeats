@@ -54,9 +54,7 @@ function ExtraSeats:onPlayerEnterExtraSeatAttempt(vehicleId, player)
     if (self.extraSeats[vehicleModelId] or 0) < 1 then return false end
 
     if self.takenSeats[vehicleId] then
-
         if #ExtraSeats:GetExtraOccupants(vehicle) >= (self.extraSeats[vehicleModelId] or 0) then return false end
-
     end
 
     local playerId = player:GetId() + 1
@@ -64,9 +62,7 @@ function ExtraSeats:onPlayerEnterExtraSeatAttempt(vehicleId, player)
     if not self.takenSeats[vehicleId] then self.takenSeats[vehicleId] = {} end
 
     self.takenSeats[vehicleId][playerId] = true
-
     self.movePlayer[playerId] = Timer()
-
     Network:Send(player, "ES-Spectate", {vehicleId, vehicle:GetPosition()})
 
 end
@@ -76,19 +72,15 @@ function ExtraSeats:onPlayerLeaveExtraSeat(vehicleId, player)
     player:SetStreamDistance(self.streamDistance)
 
     local vehicle = Vehicle.GetById(vehicleId)
-
     local playerId = player:GetId() + 1
     
     if not self.takenSeats[vehicleId] then return false end
-
     if not self.takenSeats[vehicleId][playerId] then return false end
 
     self.takenSeats[vehicleId][playerId] = nil
 
     if vehicle then
-
         player:SetPosition(vehicle:GetPosition() + vehicle:GetAngle() * Vector3(5, 1, 0))
-
     end
 
 end
@@ -96,21 +88,17 @@ end
 function ExtraSeats:onPostTick(player)
 
     for playerId, _ in pairs(self.movePlayer) do
-
         if self.movePlayer[playerId]:GetSeconds() > 2 then
 
             local player = Player.GetById(playerId - 1)
 
             if player then
-
                 player:SetStreamDistance(0)
-
             end
 
             self.movePlayer[playerId] = nil
 
         end
-
     end
 
 end
@@ -120,13 +108,9 @@ function ExtraSeats:onPlayerQuit(args)
     local playerId = args.player:GetId() + 1
 
     for vehicleId, _ in pairs(self.takenSeats) do
-
         if self.takenSeats[vehicleId][playerId] then
-
             self.takenSeats[vehicleId][playerId] = nil
-
         end
-
     end
 
 end
@@ -136,19 +120,15 @@ function ExtraSeats:GetPlayerPosition(player)
     local playerId = player:GetId() + 1
 
     for vehicleId, _ in pairs(self.takenSeats) do
-
         if self.takenSeats[vehicleId][playerId] then
 
             local vehicle = Vehicle.GetById(vehicleId)
 
             if vehicle then
-
                 return vehicle:GetPosition()
-
             end
 
         end
-
     end
 
     return player:GetPosition()
@@ -160,19 +140,15 @@ function ExtraSeats:InVehicle(player)
     local playerId = player:GetId() + 1
 
     for vehicleId, _ in pairs(self.takenSeats) do
-
         if self.takenSeats[vehicleId][playerId] then
 
             local vehicle = Vehicle.GetById(vehicleId)
 
             if vehicle then
-
                 return true
-
             end
 
         end
-
     end
 
     return player:InVehicle()
@@ -184,19 +160,15 @@ function ExtraSeats:GetVehicle(player)
     local playerId = player:GetId() + 1
 
     for vehicleId, _ in pairs(self.takenSeats) do
-
         if self.takenSeats[vehicleId][playerId] then
 
             local vehicle = Vehicle.GetById(vehicleId)
 
             if vehicle then
-
                 return vehicle
-
             end
 
         end
-
     end
 
     return player:GetVehicle()
@@ -212,19 +184,15 @@ function ExtraSeats:GetExtraOccupants(vehicle)
         local vehicleId = vehicle:GetId()
 
         if self.takenSeats[vehicleId] then
-
             for playerId, _ in pairs(self.takenSeats[vehicleId]) do
 
                 local player = Player.GetById(playerId - 1)
 
                 if player then
-
                     table.insert(extraOccupantsTable, player)
-
                 end
 
             end
-
         end
 
     end
@@ -242,9 +210,7 @@ function ExtraSeats:GetAllOccupants(vehicle)
         allOccupantsTable = vehicle:GetOccupants()
 
         for _, player in pairs(ExtraSeats:GetExtraOccupants(vehicle)) do
-
            table.insert(allOccupantsTable, player)
-
         end
 
     end
