@@ -30,15 +30,16 @@ function ExtraSeats:onKeyUp(args)
     if args.key ~= string.byte(self.enterVehicleKey) then return end
 
     if self.inVehicle then
-
         Network:Send("ES-Leave", self.inVehicle)
         self.inVehicle = false
         Game:FireEvent("ply.makevulnerable")
         return
-
     end
 
     if LocalPlayer:InVehicle() then return end
+    
+	local baseState = LocalPlayer:GetBaseState()
+	if baseState == PlayerState.InMountedGun or baseState == PlayerState.StuntPos then return end
 
     local playerPos = LocalPlayer:GetPosition()
 
@@ -46,28 +47,21 @@ function ExtraSeats:onKeyUp(args)
     local closestVehicle
 
     for vehicle in Client:GetVehicles() do
-
         if IsValid(vehicle) then
 
             local distance = Vector3.Distance(vehicle:GetPosition(), playerPos)
 
             if distance < self.enterMaxDistance and distance < minDistance then
-
                 minDistance = distance
                 closestVehicle = vehicle:GetId()
-
                 break
-
             end
 
         end
-
     end
 
     if closestVehicle then
-
         Network:Send("ES-Enter", closestVehicle)
-
     end
 
     self.delayTimer:Restart()
@@ -81,23 +75,15 @@ function ExtraSeats:onCalcView()
     local vehicle = Vehicle.GetById(self.inVehicle)
 
     if IsValid(vehicle) then
-
         Camera:SetPosition(vehicle:GetPosition() + Camera:GetAngle() * Vector3(0, 4, 15))
-
     else
-
         if (ExtraSeats.tick or 0) < 1000 then
-
             Camera:SetPosition(self.vehiclePos)
-
         else
-
             Network:Send("ES-Leave", self.inVehicle)
             self.inVehicle = false
             Game:FireEvent("ply.makevulnerable")
-
         end
-
     end
 
     ExtraSeats.tick = (ExtraSeats.tick or 0) + 1
