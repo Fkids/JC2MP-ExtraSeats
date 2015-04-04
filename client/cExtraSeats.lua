@@ -38,8 +38,8 @@ function ExtraSeats:onKeyUp(args)
 
     if LocalPlayer:InVehicle() then return end
     
-	local baseState = LocalPlayer:GetBaseState()
-	if baseState == PlayerState.InMountedGun or baseState == PlayerState.StuntPos then return end
+    local playerState = LocalPlayer:GetState()
+    if playerState == PlayerState.InMountedGun or playerState == PlayerState.StuntPos then return end
 
     local playerPos = LocalPlayer:GetPosition()
 
