@@ -5,7 +5,7 @@ class 'ExtraSeats'
 function ExtraSeats:__init()
 
     self.enterVehicleKey = "G" -- Key to enter/leave extra seat
-    self.timerDelay = 1 -- Delay in seconds between trying to enter/leave an extra seat
+    self.timerDelay = 2 -- Delay in seconds between trying to enter/leave an extra seat
     self.enterMaxDistance = 10 -- How far can you be to enter an extra seat
 
     self.delayTimer = Timer()
@@ -93,7 +93,12 @@ end
 
 function ExtraSeats:onLocalPlayerInput(args)
 
-    if not self.inVehicle then return end
+    if not self.inVehicle then
+        if args.input == Action.StuntJump then
+            self.delayTimer:Restart()
+        end
+        return
+    end
 
     if args.input ~= Action.LookUp and
             args.input ~= Action.LookDown and
