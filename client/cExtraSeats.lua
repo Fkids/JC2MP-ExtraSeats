@@ -10,6 +10,8 @@ function ExtraSeats:__init()
 
     self.delayTimer = Timer()
     self.inVehicle = false
+    
+    self.cameraActions = {[Action.LookUp] = true, [Action.LookDown] = true, [Action.LookLeft] = true, [Action.LookRight] = true}
 
     Events:Subscribe("KeyUp", self, self.onKeyUp)
     Events:Subscribe("CalcView", self, self.onCalcView)
@@ -100,13 +102,8 @@ function ExtraSeats:onLocalPlayerInput(args)
         return
     end
 
-    if args.input ~= Action.LookUp and
-            args.input ~= Action.LookDown and
-            args.input ~= Action.LookLeft and
-            args.input ~= Action.LookRight then
-
+    if not self.cameraActions[args.input] then
         return false
-
     end
 
 end
